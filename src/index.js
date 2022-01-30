@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ChakraProvider } from '@chakra-ui/react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Login from './routes/Login';
 
 const client = new ApolloClient({
   uri: process.env.BACKEND,
@@ -17,7 +18,10 @@ ReactDOM.render(
     <ApolloProvider client={client}>
       <BrowserRouter>
         <ChakraProvider>
-          <App />
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
         </ChakraProvider>
       </BrowserRouter>
     </ApolloProvider>
