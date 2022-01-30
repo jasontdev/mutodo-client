@@ -1,10 +1,14 @@
 {
   "root": true,
-  "plugins": ["prettier", "react", "react-hooks"],
-  "extends": ["plugin:react", "plugin:react-hooks", "airbnb-base", "prettier"],
+  "plugins": ["prettier"],
+  "extends": ["airbnb", "prettier"],
   "rules": {
     "no-console": 1, // Means warning
     "prettier/prettier": 2, // Means error
-    "semi": 1
+    "semi": 1,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+  },
+  "env": {
+    "browser": true
   }
 }

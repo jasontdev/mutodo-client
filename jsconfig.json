@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "module": "commonjs",
-    "target": "es2021"
-  },
-  "include": ["src/**/*.js", "src/App.jsx"],
-  "exclude": ["node_modules", "dist"]
-}
