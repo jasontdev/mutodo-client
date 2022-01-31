@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import Login from './routes/Login';
+import Home from './routes/Home';
 
 function App({ apolloClient }) {
   return (
@@ -14,6 +15,7 @@ function App({ apolloClient }) {
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/home" element={<Home />} />
           </Routes>
         </ChakraProvider>
       </BrowserRouter>
