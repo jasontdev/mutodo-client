@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
 import { useState } from 'react/cjs/react.development';
 import { gql, useLazyQuery } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 const jwtQuery = gql`
   query GetJwt($email: String!, $password: String!) {
@@ -12,9 +13,25 @@ const jwtQuery = gql`
 `;
 
 export default function Login() {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [getJwt, { error }] = useLazyQuery(jwtQuery);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [getJwt, { data }] = useLazyQuery(jwtQuery);
+  const navigate = useNavigate();
+
+  const handleData = () => {
+    if (data) {
+      if (data.login.jwt) {
+        navigate('/home', { state: { jwt: data.login.jwt } });
+      } else {
+        return (
+          <Text color="red" marginTop={3}>
+            Login error. Are your email and password correct?
+          </Text>
+        );
+      }
+    }
+    return <div />;
+  };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
@@ -38,13 +55,7 @@ export default function Login() {
       >
         Login
       </Button>
-      {error ? (
-        <Text color="red" marginTop={3}>
-          Login attempt failed. Is your email and password correct?
-        </Text>
-      ) : (
-        <div />
-      )}
+      {handleData()}
     </Box>
   );
 }
