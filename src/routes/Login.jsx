@@ -1,37 +1,44 @@
-import React from 'react';
-import { Box, Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
-import { useState } from 'react/cjs/react.development';
-import { gql, useLazyQuery } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Stack,
+  Text,
+  Alert,
+  AlertIcon,
+} from "@chakra-ui/react";
+import { gql, useLazyQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 const jwtQuery = gql`
   query GetJwt($email: String!, $password: String!) {
     login(email: $email, rawPassword: $password) {
       jwt
+      uuid
     }
   }
 `;
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [getJwt, { data }] = useLazyQuery(jwtQuery);
+  const [loginError, setLoginError] = useState(false);
   const navigate = useNavigate();
 
-  const handleData = () => {
+  useEffect(() => {
     if (data) {
       if (data.login.jwt) {
-        navigate('/home', { state: { jwt: data.login.jwt } });
+        navigate("/home", {
+          state: { uuid: data.login.uuid, jwt: data.login.jwt },
+        });
       } else {
-        return (
-          <Text color="red" marginTop={3}>
-            Login error. Are your email and password correct?
-          </Text>
-        );
+        setLoginError(true);
       }
     }
-    return <div />;
-  };
+  }, [data]);
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
@@ -55,7 +62,14 @@ export default function Login() {
       >
         Login
       </Button>
-      {handleData()}
+      {loginError ? (
+        <Alert status="error" width={["100%", 300]} mt="1rem">
+          <AlertIcon />
+          Login error
+        </Alert>
+      ) : (
+        <div />
+      )}
     </Box>
   );
 }
