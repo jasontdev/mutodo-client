@@ -1,13 +1,12 @@
-import "./App.css";
+import React from "react";
 import Navbar from "./Navbar";
+import { CenteredContent } from "./layout";
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
+    <CenteredContent>
       <Navbar />
       <h1>Welcome to Mutodo</h1>
-    </div>
+    </CenteredContent>
   );
 }
-
-export default App;

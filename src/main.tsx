@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./index.css";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import App from "./App";
 import Login from "./Login";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { Layout } from "./layout";
 
 const queryClient = new QueryClient();
 
@@ -13,8 +13,16 @@ ReactDOM.render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            element={
+              <Layout>
+                <Outlet />
+              </Layout>
+            }
+          >
+            <Route path="/" element={<App />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
