@@ -23,4 +23,19 @@ const FormRow = styled.div`
   gap: 1rem;
 `;
 
-export { FormBox, FormRow, FormColumn };
+const TextInput = styled.input`
+  border-radius: 3px;
+  padding: 0.4rem;
+  border-style: solid;
+  font-size: large;
+`;
+
+const Button = styled.button`
+  background-color: ghostwhite;
+  padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+  border-style: solid;
+  font-size: large;
+  border-radius: 3px;
+`;
+
+export { FormBox, FormRow, FormColumn, TextInput, Button };

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Layout, CenteredContent } from "./layout";
-import { FormBox, FormRow, FormColumn } from "./forms";
+import { FormBox, FormRow, FormColumn, TextInput, Button } from "./forms";
 type LoginCredentials = {
   email: string;
   password: string;
@@ -23,7 +23,7 @@ export default function Login() {
   useQuery(["credentials", credentials], () => attemptLogin(), {
     enabled: formState.isSubmitted,
     onSuccess: (data: SuccessfulResponseBody) =>
-      navigate("/dash", { state: { jwt: data.jwt } }),
+      navigate("/tasks", { state: { jwt: data.jwt } }),
   });
 
   async function attemptLogin() {
@@ -53,14 +53,17 @@ export default function Login() {
           <form onSubmit={handleSubmit((formData) => setCredentials(formData))}>
             <FormColumn>
               <FormRow>
-                <input placeholder="Email" {...register("email")} />
+                <TextInput placeholder="Email" {...register("email")} />
               </FormRow>
               <FormRow>
-                <input placeholder="Password" {...register("password")} />
+                <TextInput placeholder="Password" {...register("password")} />
               </FormRow>
               <FormRow>
-                <button type="submit">Login</button>
+                <Button type="submit">Login</Button>
               </FormRow>
+              <div>
+                New to Motudo? Register <Link to="/register">here</Link>.
+              </div>
             </FormColumn>
           </form>
         </FormBox>
