@@ -4,12 +4,13 @@ import { useQuery } from "react-query";
 import { useNavigate, Link } from "react-router-dom";
 import { Layout, CenteredContent } from "./layout";
 import { FormBox, FormRow, FormColumn, TextInput, Button } from "./forms";
+import { postJson } from "./queries";
 type LoginCredentials = {
   email: string;
   password: string;
 };
 
-type SuccessfulResponseBody = {
+type Token = {
   jwt: string;
 };
 
@@ -22,27 +23,15 @@ export default function Login() {
   const navigate = useNavigate();
   useQuery(["credentials", credentials], () => attemptLogin(), {
     enabled: formState.isSubmitted,
-    onSuccess: (data: SuccessfulResponseBody) =>
+    onSuccess: (data: Token) =>
       navigate("/tasks", { state: { jwt: data.jwt } }),
   });
 
   async function attemptLogin() {
-    const { email, password } = credentials;
-    return new Promise((resolve, reject) => {
-      const request = new Request("http://localhost:4000/auth/login");
-      fetch(request, {
-        method: "POST",
-        mode: "cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      }).then((response) => {
-        if (response.status === 200) {
-          resolve(response.json());
-        } else {
-          reject("Failed to authenticate");
-        }
-      });
-    });
+    return postJson<LoginCredentials, Token>(
+      "http://localhost:4000/auth/login",
+      credentials
+    );
   }
 
   return (

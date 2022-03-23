@@ -18,6 +18,12 @@ type UserCredentials = {
   role: string;
 };
 
+type SavedUser = {
+  id: string;
+  email: string;
+  role: string;
+};
+
 export default function Register() {
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: "",
@@ -35,20 +41,11 @@ export default function Register() {
   );
 
   async function attemptRegister() {
-    return new Promise((resolve, reject) => {
-      const { email, password } = credentials;
-      postJson<UserCredentials>("http://localhost:4000/auth/register", {
-        email,
-        password,
-        role: "user",
-      }).then((response) => {
-        if (response.status === 200) {
-          resolve(response.json());
-        } else {
-          reject("Registration failed");
-        }
-      });
-    });
+    const { email, password } = credentials;
+    return postJson<UserCredentials, SavedUser>(
+      "http://localhost:4000/auth/register",
+      { email, password, role: "user" }
+    );
   }
 
   return (
