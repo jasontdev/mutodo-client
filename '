@@ -1,7 +1,8 @@
-import React from "react";
+import React, { MouseEventHandler, useContext } from "react";
+import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { useAuth } from "./auth";
 import "./navbar.css";
+import { AuthContext } from "./main";
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -20,17 +21,18 @@ const NavbarLinks = styled.div`
 `;
 
 export default function Navbar() {
-  const auth = useAuth();
+
+  function handleLoginClick() {
+    auth.userManager.signinRedirect();
+  }
+
+  const auth = useContext(AuthContext);
   return (
     <NavbarContainer>
       <NavbarBrand>mutodo</NavbarBrand>
       <NavbarLinks>
-        {auth.getAccessToken() ? (
-          <div>Sign out</div>
-        ) : (
-          <a href={auth.loginUri()}>Login</a>
-        )}
-      </NavbarLinks>
+       <button onClick={(event) => handleLoginClick()} 
+      </NavbarLink>
     </NavbarContainer>
   );
 }

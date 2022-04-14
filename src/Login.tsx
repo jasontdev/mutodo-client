@@ -1,62 +1,38 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useNavigate, Link } from "react-router-dom";
-import { Layout, CenteredContent } from "./layout";
-import { FormBox, FormRow, FormColumn, TextInput, Button } from "./forms";
-import { postJson } from "./queries";
-type LoginCredentials = {
-  email: string;
-  password: string;
-};
-
-type Token = {
-  jwt: string;
-};
+import React, { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { useAuth } from "./auth";
 
 export default function Login() {
-  const [credentials, setCredentials] = useState<LoginCredentials>({
-    email: "",
-    password: "",
-  });
-  const { register, formState, handleSubmit } = useForm<LoginCredentials>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  useQuery(["credentials", credentials], () => attemptLogin(), {
-    enabled: formState.isSubmitted,
-    onSuccess: (data: Token) =>
-      navigate("/tasks", { state: { jwt: data.jwt } }),
+  const auth = useAuth();
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code !== null) {
+      const params = new URLSearchParams();
+      params.append("grant_type", "authorization_code");
+      params.append("code", code);
+      params.append("client_id", import.meta.env.VITE_OAUTH2_CLIENT_ID);
+      params.append("redirect_uri", import.meta.env.VITE_OAUTH2_REDIRECT_URI);
+      params.append("scope", "openid");
+
+      console.log(import.meta.env.VITE_OAUTH2_ENDPOINT);
+      fetch(`${import.meta.env.VITE_OAUTH2_ENDPOINT}/oauth2/token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params,
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          auth.setAccessToken(json.access_token);
+          navigate("/home");
+        });
+    }
   });
 
-  async function attemptLogin() {
-    return postJson<LoginCredentials, Token>(
-      "http://localhost:4000/auth/login",
-      credentials
-    );
-  }
-
-  return (
-    <Layout>
-      <CenteredContent>
-        <h1>Login</h1>
-        <FormBox>
-          <form onSubmit={handleSubmit((formData) => setCredentials(formData))}>
-            <FormColumn>
-              <FormRow>
-                <TextInput placeholder="Email" {...register("email")} />
-              </FormRow>
-              <FormRow>
-                <TextInput placeholder="Password" {...register("password")} />
-              </FormRow>
-              <FormRow>
-                <Button type="submit">Login</Button>
-              </FormRow>
-              <div>
-                New to Motudo? Register <Link to="/register">here</Link>.
-              </div>
-            </FormColumn>
-          </form>
-        </FormBox>
-      </CenteredContent>
-    </Layout>
-  );
+  return <div>Awaiting login result...</div>;
 }

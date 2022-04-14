@@ -14,7 +14,7 @@ type Tasklist = {
   name: string;
 };
 
-export default function Tasks() {
+export default function Home() {
   const location = useLocation();
   const { jwt } = location.state as LocationState;
 
@@ -36,7 +36,6 @@ export default function Tasks() {
             resolve(data.data.tasklists);
           })
         );
-      });
     }
   );
 
@@ -44,7 +43,6 @@ export default function Tasks() {
     <CenteredContent>
       <Navbar />
       <h1>Tasks</h1>
-      {data ? <Tasklists tasklists={data} /> : <div />}
     </CenteredContent>
   );
 }
