@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/noto-sans": "^4.5.9",
     "@types/react-query": "^1.2.9",
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
