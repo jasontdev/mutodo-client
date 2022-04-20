@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { useAuth } from "./auth";
 import { useQuery } from "react-query";
 import Navbar from "./Navbar";
-import NewUser from "./NewUser";
 import { CenteredContent } from "./layout";
 import graphql from "./graphql";
+import Tasklists from "./Tasklists";
 
 const userQuery = `
       query User {
-        user {
-          id
+        tasklists {
+            id
           name
         }
       }
@@ -34,15 +34,7 @@ export default function Home() {
   return (
     <CenteredContent>
       <Navbar />
-      <h1>Tasklists</h1>
-      {data ? (
-        <h3>Hello, {data.data.user.name}, and welcome to Mutodo.</h3>
-      ) : (
-        <div>
-          <h3>Hello. Welcome to Mutodo.</h3>
-          <NewUser />
-        </div>
-      )}
+      {data? <Tasklists tasklists={data.data.tasklists}/> : <div />}
     </CenteredContent>
   );
 }

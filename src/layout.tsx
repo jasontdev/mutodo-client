@@ -6,6 +6,7 @@ const Layout = styled.div`
   width: 100vw;
   height: 100vh;
   justify-content: center;
+  background-color: whitesmoke;
 `;
 
 const CenteredContent = styled.div`
