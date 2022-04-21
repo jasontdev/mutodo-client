@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <CenteredContent>
       <Navbar />
-      {data? <Tasklists tasklists={data.data.tasklists}/> : <div />}
+      {data ? <Tasklists tasklists={data.data.tasklists} /> : <div />}
     </CenteredContent>
   );
 }
