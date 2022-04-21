@@ -22,7 +22,17 @@ const Button = styled.div`
 
 const List = styled.div`
   display: flex;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: lightgrey;
   flex-direction: column;
 `;
 
-export { Box, Button, List };
+const ListItem = styled.div`
+  padding: 0.5rem 2rem 0.5rem 2rem;
+  &:hover {
+    background-color: honeydew;
+  }
+`;
+
+export { Box, Button, List, ListItem };
