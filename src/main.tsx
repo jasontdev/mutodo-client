@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import "@fontsource/noto-sans";
+import "@fontsource/open-sans";
 import { Layout } from "./layout";
 import { GlobalStyle } from "./GlobalStyle";
 import App from "./App";
