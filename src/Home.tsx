@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useAuth } from "./auth";
 import { useQuery } from "react-query";
 import Navbar from "./Navbar";
-import { CenteredContent } from "./layout";
+import { CenteredContent, Layout } from "./layout";
 import graphql from "./graphql";
 import Tasklists from "./Tasklists";
 
@@ -32,9 +32,11 @@ export default function Home() {
   });
 
   return (
-    <CenteredContent>
-      <Navbar />
-      {data ? <Tasklists tasklists={data.data.tasklists} /> : <div />}
-    </CenteredContent>
+    <Layout>
+      <Navbar title="Tasklists" />
+      <CenteredContent>
+        {data ? <Tasklists tasklists={data.data.tasklists} /> : <div />}
+      </CenteredContent>
+    </Layout>
   );
 }

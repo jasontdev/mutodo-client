@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, BoxTitle, Button, List } from "./ui-components"
+import { Box, Button, List } from "./ui-components"
 
 type TasklistsProps = {
   tasklists: Tasklist[];
@@ -18,7 +18,6 @@ function TasklistsItem({ tasklist }: { tasklist: Tasklist }) {
 export default function Tasklists({ tasklists }: TasklistsProps) {
   return (
     <Box>
-        <BoxTitle>Tasklists</BoxTitle>
         <List>
           {tasklists.map((tasklist) => (
             <TasklistsItem key={tasklist.id} tasklist={tasklist} />

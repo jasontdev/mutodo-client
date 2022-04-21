@@ -21,10 +21,10 @@ ReactDOM.render(
           <Routes>
             <Route
               element={
-                <Layout>
+                <div>
                   <GlobalStyle />
                   <Outlet />
-                </Layout>
+                </div>
               }
             >
               <Route path="/" element={<App />} />
