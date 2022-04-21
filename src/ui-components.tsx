@@ -28,6 +28,11 @@ const List = styled.div`
   flex-direction: column;
 `;
 
+const FlexRowJustifyCenter = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
 const ListItem = styled.div`
   padding: 0.5rem 2rem 0.5rem 2rem;
   &:hover {
@@ -35,4 +40,4 @@ const ListItem = styled.div`
   }
 `;
 
-export { Box, Button, List, ListItem };
+export { Box, Button, FlexRowJustifyCenter, List, ListItem };

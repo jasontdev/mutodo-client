@@ -9,6 +9,7 @@ body, html {
     font-family: Open Sans, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: #282828;
 }
 
 a {

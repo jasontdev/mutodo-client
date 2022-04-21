@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Button, List, ListItem } from "./ui-components";
+import { Box, Button, FlexRowJustifyCenter, List, ListItem } from "./ui-components";
 
 type TasklistsProps = {
   tasklists: Tasklist[];
@@ -27,9 +27,9 @@ export default function Tasklists({ tasklists }: TasklistsProps) {
           <TasklistsItem key={tasklist.id} tasklist={tasklist} />
         ))}
       </List>
-      <div>
+      <FlexRowJustifyCenter>
         <Button>Create</Button>
-      </div>
+      </FlexRowJustifyCenter>
     </Box>
   );
 }
