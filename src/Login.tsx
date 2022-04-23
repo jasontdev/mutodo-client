@@ -18,7 +18,6 @@ export default function Login() {
       params.append("redirect_uri", import.meta.env.VITE_OAUTH2_REDIRECT_URI);
       params.append("scope", "openid");
 
-      console.log(import.meta.env.VITE_OAUTH2_ENDPOINT);
       fetch(`${import.meta.env.VITE_OAUTH2_ENDPOINT}/oauth2/token`, {
         method: "POST",
         headers: {

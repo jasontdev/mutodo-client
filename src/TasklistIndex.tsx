@@ -23,9 +23,9 @@ export default function TasklistIndex({ tasklists }: TasklistIndexProps) {
   return (
     <Box>
       <List>
-        {tasklists.map((tasklist) => (
+        {tasklists ? tasklists.map((tasklist) => (
           <TasklistIndexItem key={tasklist.id} tasklist={tasklist} />
-        ))}
+        )): <div />}
       </List>
       <FlexRowJustifyCenter>
         <Button>Create</Button>
