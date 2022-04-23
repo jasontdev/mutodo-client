@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import Navbar from "./Navbar";
 import { CenteredContent, Layout } from "./layout";
 import graphql from "./graphql";
-import Tasklists from "./Tasklists";
+import TasklistIndex from "./TasklistIndex";
 
 const userQuery = `
       query User {
@@ -17,7 +17,7 @@ const userQuery = `
 
 export default function Home() {
   const auth = useAuth();
-  const { data } = useQuery(["user"], () =>
+  const { data, status } = useQuery(["user"], () =>
     graphql.query(
       "http://localhost:4100/graphql",
       auth.getAccessToken(),
@@ -35,7 +35,13 @@ export default function Home() {
     <Layout>
       <Navbar title="Tasklists" />
       <CenteredContent>
-        {data ? <Tasklists tasklists={data.data.tasklists} /> : <div />}
+        {status === "loading" ? (
+          <div>Loading tasklists...</div>
+        ) : status === "error" ? (
+          <div>Error fetching tasklists</div>
+        ) : (
+          <TasklistIndex tasklists={data.data.tasklists} />
+        )}
       </CenteredContent>
     </Layout>
   );

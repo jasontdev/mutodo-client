@@ -10,6 +10,7 @@ import Home from "./Home";
 import Register from "./Register";
 import Login from "./Login";
 import { AuthProvider } from "./auth";
+import Tasklist from "./Tasklist";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ ReactDOM.render(
               <Route path="/home" element={<Home />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/tasklist/:tasklist_id" element={<Tasklist />} />
             </Route>
           </Routes>
         </BrowserRouter>
