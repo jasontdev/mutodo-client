@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { auth, useAuth } from "./auth";
+import { useAuth } from "./auth";
 import graphql from "./graphql";
 import { CenteredContent, Layout } from "./layout";
 import Navbar from "./Navbar";
+import { Box } from "./ui-components";
 
-
-type ReceivedTask = {
+type Task = {
   id: string;
   name: string;
-}
+};
 
 export default function Tasklist() {
   const params = useParams();
   const auth = useAuth();
-  const [ tasks, setTasks ] = useState<ReceivedTask[]>([]);
 
   const tasksQuery = `
     query Tasks {
@@ -23,9 +22,9 @@ export default function Tasklist() {
         id
         name
       }
-    }`
+    }`;
 
-  const { data } = useQuery(["user"], () =>
+  const { data, isLoading, isError, isRefetching } = useQuery(["user"], () =>
     graphql.query(
       "http://localhost:4100/graphql",
       auth.getAccessToken(),
@@ -37,18 +36,25 @@ export default function Tasklist() {
     if (!auth.getAccessToken()) {
       window.location.replace(auth.loginUri());
     }
+  });
 
-    if(data.data.tasks) {
-      setTasks(data.data.tasks);
-    }
-
-  }, [data]);
-  
   return (
     <Layout>
       <Navbar title="Tasks" />
       <CenteredContent>
-      {tasks.map((task) => <div key={task.id}>{task.name}</div>)}
+        <Box>
+          {isLoading ? (
+            <div>Loading tasks...</div>
+          ) : isError ? (
+            <div>Error loading tasks.</div>
+          ) : isRefetching ? (
+            <div /> // TODO: display stale content while refreshing
+          ) : (
+            data.data.tasks.map((task: Task) => (
+              <div key={task.id}>{task.name}</div>
+            ))
+          )}
+        </Box>
       </CenteredContent>
     </Layout>
   );

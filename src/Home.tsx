@@ -17,7 +17,7 @@ const userQuery = `
 
 export default function Home() {
   const auth = useAuth();
-  const { data, status } = useQuery(["user"], () =>
+  const { data, isLoading, isError } = useQuery(["user"], () =>
     graphql.query(
       "http://localhost:4100/graphql",
       auth.getAccessToken(),
@@ -35,9 +35,9 @@ export default function Home() {
     <Layout>
       <Navbar title="Tasklists" />
       <CenteredContent>
-        {status === "loading" ? (
+        {isLoading ? (
           <div>Loading tasklists...</div>
-        ) : status === "error" ? (
+        ) : isError ? (
           <div>Error fetching tasklists</div>
         ) : (
           <TasklistIndex tasklists={data.data.tasklists} />
