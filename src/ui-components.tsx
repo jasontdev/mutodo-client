@@ -31,7 +31,12 @@ const List = styled.div`
 const FlexRowJustifyCenter = styled.div`
   display: flex;
   justify-content: center;
-`
+`;
+
+const FlexRowAlignCenter = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
 
 const ListItem = styled.div`
   padding: 0.5rem 2rem 0.5rem 2rem;
@@ -40,4 +45,21 @@ const ListItem = styled.div`
   }
 `;
 
-export { Box, Button, FlexRowJustifyCenter, List, ListItem };
+const Checkbox = styled.input.attrs({ type: "checkbox" })`
+  height: 1.2rem;
+  width: 1.2rem;
+
+  &:checked {
+    background-color: red;
+  }
+`;
+
+export {
+  Box,
+  Button,
+  Checkbox,
+  FlexRowAlignCenter,
+  FlexRowJustifyCenter,
+  List,
+  ListItem,
+};

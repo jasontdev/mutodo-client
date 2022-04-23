@@ -5,12 +5,9 @@ import { useAuth } from "./auth";
 import graphql from "./graphql";
 import { CenteredContent, Layout } from "./layout";
 import Navbar from "./Navbar";
-import { Box } from "./ui-components";
-
-type Task = {
-  id: string;
-  name: string;
-};
+import TasklistItem from "./TasklistItem";
+import { Task } from "./types";
+import { Box, List } from "./ui-components";
 
 export default function Tasklist() {
   const params = useParams();
@@ -50,9 +47,11 @@ export default function Tasklist() {
           ) : isRefetching ? (
             <div /> // TODO: display stale content while refreshing
           ) : (
-            data.data.tasks.map((task: Task) => (
-              <div key={task.id}>{task.name}</div>
-            ))
+            <List>
+              {data.data.tasks.map((task: Task) => (
+                <TasklistItem key={task.id} task={task} />
+              ))}
+            </List>
           )}
         </Box>
       </CenteredContent>
