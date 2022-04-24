@@ -90,7 +90,14 @@ export default function Tasklist() {
             </List>
           )}
           <FlexRowJustifyCenter>
-            <Button onClick={() => setShowNewTask(true)}>Create</Button>
+            {showNewTask ? (
+              <FlexRowJustifyCenter>
+                <Button>Submit</Button>
+                <Button onClick={() => setShowNewTask(false)}>Cancel</Button>
+              </FlexRowJustifyCenter>
+            ) : (
+              <Button onClick={() => setShowNewTask(true)}>Create</Button>
+            )}
           </FlexRowJustifyCenter>
         </Box>
       </CenteredContent>

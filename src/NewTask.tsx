@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, FlexRowAlignCenter, ListItem, Input } from "./ui-components";
+import { FlexRowAlignCenter, ListItem, Input } from "./ui-components";
 
 type NewTaskProps = {
   value: string;

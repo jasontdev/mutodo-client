@@ -31,10 +31,12 @@ const List = styled.div`
 const FlexRowJustifyCenter = styled.div`
   display: flex;
   justify-content: center;
+  gap: 1rem;
 `;
 
 const FlexRowAlignCenter = styled.div`
   display: flex;
+  align-content: center;
   gap: 1rem;
 `;
 
