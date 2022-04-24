@@ -54,12 +54,35 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   }
 `;
 
+const Input = styled.input`
+  font-weight: 300;
+  color: #282828;
+  border-color: #6f00fe;
+  border-style: solid;
+  box-shadow: none;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  font-size: large;
+  outline: none;
+  width: 100%;
+  padding: 0 1rem 0 1rem;
+
+  &:focus {
+    font-weight: 300;
+    outline: none;
+    border-color: #6f00fe;
+    box-shadow: 0 0 0.5rem blue;
+    color: #282828;
+  }
+`;
+
 export {
   Box,
   Button,
   Checkbox,
   FlexRowAlignCenter,
   FlexRowJustifyCenter,
+  Input,
   List,
   ListItem,
 };
