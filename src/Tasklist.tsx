@@ -7,7 +7,7 @@ import { CenteredContent, Layout } from "./layout";
 import Navbar from "./Navbar";
 import TasklistItem from "./TasklistItem";
 import { Task } from "./types";
-import { Box, List } from "./ui-components";
+import { Box, FlexRowJustifyCenter, List } from "./ui-components";
 
 export default function Tasklist() {
   const params = useParams();
@@ -21,7 +21,7 @@ export default function Tasklist() {
       }
     }`;
 
-  const { data, isLoading, isError, isRefetching } = useQuery(["user"], () =>
+  const { data, isLoading, isError, isRefetching } = useQuery([params.tasklist_id], () =>
     graphql.query(
       "http://localhost:4100/graphql",
       auth.getAccessToken(),
@@ -35,24 +35,33 @@ export default function Tasklist() {
     }
   });
 
+  function renderTasks(tasks: Task[]) {
+    if (tasks.length === 0) {
+      return (<FlexRowJustifyCenter><h3>Tasklist is empty</h3></FlexRowJustifyCenter>)
+    }
+    return (<List>
+      {tasks.map((task: Task) => (
+        <TasklistItem key={task.id} task={task} />
+      ))}
+    </List>);
+  }
+
   return (
     <Layout>
       <Navbar title="Tasks" />
       <CenteredContent>
         <Box>
           {isLoading ? (
-            <div>Loading tasks...</div>
+            <FlexRowJustifyCenter>
+              <h3>Loading tasks...</h3>
+            </FlexRowJustifyCenter>
           ) : isError ? (
-            <div>Error loading tasks.</div>
+            <FlexRowJustifyCenter>
+              <h3>Error loading tasks.</h3>
+            </FlexRowJustifyCenter>
           ) : isRefetching ? (
-            <div /> // TODO: display stale content while refreshing
-          ) : (
-            <List>
-              {data.data.tasks.map((task: Task) => (
-                <TasklistItem key={task.id} task={task} />
-              ))}
-            </List>
-          )}
+            <FlexRowJustifyCenter><h3>Refreshing tasks...</h3></FlexRowJustifyCenter> // TODO: display stale content while refreshing
+          ) : (renderTasks(data.data.tasks))}
         </Box>
       </CenteredContent>
     </Layout>

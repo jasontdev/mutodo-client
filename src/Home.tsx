@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import { CenteredContent, Layout } from "./layout";
 import graphql from "./graphql";
 import TasklistIndex from "./TasklistIndex";
+import { Box, FlexRowJustifyCenter } from "./ui-components";
 
 const userQuery = `
       query User {
@@ -36,7 +37,9 @@ export default function Home() {
       <Navbar title="Tasklists" />
       <CenteredContent>
         {isLoading ? (
-          <div>Loading tasklists...</div>
+          <Box><FlexRowJustifyCenter>
+            <h3>Loading tasklists...</h3>
+          </FlexRowJustifyCenter></Box>
         ) : isError ? (
           <div>Error fetching tasklists</div>
         ) : (
