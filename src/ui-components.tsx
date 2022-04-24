@@ -20,6 +20,14 @@ const Button = styled.div`
   border-radius: 0.25rem;
 `;
 
+const ButtonOutline = styled(Button)`
+  background-color: transparent;
+  color: #6f00fe;
+  border-style: solid;
+  border-width: 0.15rem;
+  border-color: #6f00fe;
+`;
+
 const List = styled.div`
   display: flex;
   border-style: solid;
@@ -81,6 +89,7 @@ const Input = styled.input`
 export {
   Box,
   Button,
+  ButtonOutline,
   Checkbox,
   FlexRowAlignCenter,
   FlexRowJustifyCenter,

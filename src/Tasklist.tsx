@@ -8,7 +8,7 @@ import Navbar from "./Navbar";
 import TasklistItem from "./TasklistItem";
 import NewTask from "./NewTask";
 import { Task } from "./types";
-import { Box, Button, FlexRowJustifyCenter, List } from "./ui-components";
+import { Box, Button, ButtonOutline, FlexRowJustifyCenter, List } from "./ui-components";
 
 export default function Tasklist() {
   const [showNewTask, setShowNewTask] = useState(false);
@@ -93,7 +93,7 @@ export default function Tasklist() {
             {showNewTask ? (
               <FlexRowJustifyCenter>
                 <Button>Submit</Button>
-                <Button onClick={() => setShowNewTask(false)}>Cancel</Button>
+                <ButtonOutline onClick={() => setShowNewTask(false)}>Cancel</ButtonOutline>
               </FlexRowJustifyCenter>
             ) : (
               <Button onClick={() => setShowNewTask(true)}>Create</Button>
