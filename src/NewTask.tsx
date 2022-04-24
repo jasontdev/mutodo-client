@@ -16,7 +16,6 @@ export default function NewTask({ value, onChange }: NewTaskProps) {
           }}
           value={value}
         />
-        <Button>Submit</Button>
       </FlexRowAlignCenter>
     </ListItem>
   );
