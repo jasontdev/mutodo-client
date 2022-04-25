@@ -8,7 +8,13 @@ import Navbar from "./Navbar";
 import TasklistItem from "./TasklistItem";
 import NewTask from "./NewTask";
 import { Task } from "./types";
-import { Box, Button, ButtonOutline, FlexRowJustifyCenter, List } from "./ui-components";
+import {
+  Box,
+  Button,
+  ButtonOutline,
+  FlexRowJustifyCenter,
+  List,
+} from "./ui-components";
 
 export default function Tasklist() {
   const [showNewTask, setShowNewTask] = useState(false);
@@ -24,7 +30,7 @@ export default function Tasklist() {
       }
     }`;
 
-  const { data, isLoading, isError, isRefetching } = useQuery(
+  const { data, isLoading, isError, isRefetching, refetch } = useQuery(
     [params.tasklist_id],
     () =>
       graphql.query(
@@ -55,6 +61,26 @@ export default function Tasklist() {
         ))}
       </div>
     );
+  }
+
+  async function newTaskMutation() {
+    try {
+      const data = await graphql.query(
+        "http://localhost:4100/graphql",
+        auth.getAccessToken(),
+        `mutation NewTask {
+          newTask(tasklist: "${params.tasklist_id}", name: "${newTaskName}") {
+              id
+          }
+        }
+      `
+      );
+      // TODO: display new task in the tasklist rather than wait for refetch
+      setShowNewTask(false);
+      refetch();
+    } catch (error) {
+      console.log("Error creating new request.");
+    }
   }
 
   return (
@@ -92,8 +118,10 @@ export default function Tasklist() {
           <FlexRowJustifyCenter>
             {showNewTask ? (
               <FlexRowJustifyCenter>
-                <Button>Submit</Button>
-                <ButtonOutline onClick={() => setShowNewTask(false)}>Cancel</ButtonOutline>
+                <Button onClick={() => newTaskMutation()}>Submit</Button>
+                <ButtonOutline onClick={() => setShowNewTask(false)}>
+                  Cancel
+                </ButtonOutline>
               </FlexRowJustifyCenter>
             ) : (
               <Button onClick={() => setShowNewTask(true)}>Create</Button>
