@@ -63,6 +63,21 @@ export default function Tasklist() {
     );
   }
 
+  function renderButtons() {
+    return showNewTask ? (
+      <FlexRowJustifyCenter>
+        <Button onClick={() => newTaskMutation()}>Submit</Button>
+        <ButtonOutline onClick={() => setShowNewTask(false)}>
+          Cancel
+        </ButtonOutline>
+      </FlexRowJustifyCenter>
+    ) : (
+      <FlexRowJustifyCenter>
+        <Button onClick={() => setShowNewTask(true)}>Create</Button>
+      </FlexRowJustifyCenter>
+    );
+  }
+
   async function newTaskMutation() {
     try {
       const data = await graphql.query(
@@ -77,7 +92,7 @@ export default function Tasklist() {
       );
       // TODO: display new task in the tasklist rather than wait for refetch
       setShowNewTask(false);
-      refetch();
+      refetch;
     } catch (error) {
       console.log("Error creating new request.");
     }
@@ -115,18 +130,9 @@ export default function Tasklist() {
               )}
             </List>
           )}
-          <FlexRowJustifyCenter>
-            {showNewTask ? (
-              <FlexRowJustifyCenter>
-                <Button onClick={() => newTaskMutation()}>Submit</Button>
-                <ButtonOutline onClick={() => setShowNewTask(false)}>
-                  Cancel
-                </ButtonOutline>
-              </FlexRowJustifyCenter>
-            ) : (
-              <Button onClick={() => setShowNewTask(true)}>Create</Button>
-            )}
-          </FlexRowJustifyCenter>
+          {
+            renderButtons() /* displays Create or Submit and Cancel depending on state of showNewTask */
+          }
         </Box>
       </CenteredContent>
     </Layout>
