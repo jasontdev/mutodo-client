@@ -92,7 +92,7 @@ export default function Tasklist() {
       );
       // TODO: display new task in the tasklist rather than wait for refetch
       setShowNewTask(false);
-      refetch;
+      refetch();
     } catch (error) {
       console.log("Error creating new request.");
     }
@@ -104,17 +104,11 @@ export default function Tasklist() {
       <CenteredContent>
         <Box>
           {isLoading ? (
-            <FlexRowJustifyCenter>
-              <h3>Loading tasks...</h3>
-            </FlexRowJustifyCenter>
+            <div />
           ) : isError ? (
             <FlexRowJustifyCenter>
               <h3>Error loading tasks.</h3>
             </FlexRowJustifyCenter>
-          ) : isRefetching ? (
-            <FlexRowJustifyCenter>
-              <h3>Refreshing tasks...</h3>
-            </FlexRowJustifyCenter> // TODO: display stale content while refreshing
           ) : (
             <List>
               {renderTasks(data.data.tasks)}
