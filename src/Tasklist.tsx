@@ -47,6 +47,16 @@ export default function Tasklist() {
     }
   });
 
+  function selectOrDeselectTask(id: string) {
+    setSelectedTask((prevState) => {
+      if (prevState === id) {
+        return "";
+      } else {
+        return id;
+      }
+    });
+  }
+
   function renderTasks(tasks: Task[]) {
     if (tasks.length === 0) {
       return (
@@ -62,7 +72,7 @@ export default function Tasklist() {
             <TasklistItem
               key={task.id}
               task={task}
-              clickHandler={() => setSelectedTask(task.id)}
+              clickHandler={() => selectOrDeselectTask(task.id)}
               selected={task.id === selectedTask}
             />
           );
