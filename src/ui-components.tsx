@@ -51,8 +51,10 @@ const FlexRowAlignCenter = styled.div`
 const ListItem = styled.div`
   padding: 0.5rem 2rem 0.5rem 2rem;
   &:hover {
-    background-color: honeydew;
+    background-color: "honeydew"};
   }
+  background-color: ${(props: { selected?: boolean; key: string }) =>
+      props.selected ? "greenyellow" : "inherited"}; 
 `;
 
 const Checkbox = styled.input.attrs({ type: "checkbox" })`

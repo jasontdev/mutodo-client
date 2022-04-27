@@ -19,6 +19,7 @@ import {
 export default function Tasklist() {
   const [showNewTask, setShowNewTask] = useState(false);
   const [newTaskName, setNewTaskName] = useState("");
+  const [selectedTask, setSelectedTask] = useState("");
   const params = useParams();
   const auth = useAuth();
 
@@ -30,7 +31,7 @@ export default function Tasklist() {
       }
     }`;
 
-  const { data, isLoading, isError, isRefetching, refetch } = useQuery(
+  const { data, isLoading, isError, refetch } = useQuery(
     [params.tasklist_id],
     () =>
       graphql.query(
@@ -56,9 +57,16 @@ export default function Tasklist() {
     }
     return (
       <div>
-        {tasks.map((task: Task) => (
-          <TasklistItem key={task.id} task={task} />
-        ))}
+        {tasks.map((task: Task) => {
+          return (
+            <TasklistItem
+              key={task.id}
+              task={task}
+              clickHandler={() => setSelectedTask(task.id)}
+              selected={task.id === selectedTask}
+            />
+          );
+        })}
       </div>
     );
   }

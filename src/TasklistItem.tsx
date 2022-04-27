@@ -1,12 +1,18 @@
 import React from "react";
 import { Task } from "./types";
-import { Checkbox, FlexRowAlignCenter, ListItem } from "./ui-components";
+import { FlexRowAlignCenter, ListItem } from "./ui-components";
 
-function TasklistItem({ task }: { task: Task }) {
+type TasklistItemProps = {
+  task: Task;
+  selected?: boolean;
+  clickHandler: () => void;
+};
+
+function TasklistItem({ task, selected, clickHandler }: TasklistItemProps) {
   return (
-    <ListItem key={task.id}>
+    <ListItem key={task.id} selected={selected}>
       <FlexRowAlignCenter>
-        <Checkbox />{task.name}
+        <div onClick={clickHandler}>{task.name}</div>
       </FlexRowAlignCenter>
     </ListItem>
   );

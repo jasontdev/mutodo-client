@@ -13,7 +13,7 @@ type Tasklist = {
 
 function TasklistIndexItem({ tasklist }: { tasklist: Tasklist }) {
   return (
-    <ListItem>
+    <ListItem key={tasklist.id}>
       <Link to={`/tasklist/${tasklist.id}`}>{tasklist.name}</Link>
     </ListItem>
   );
