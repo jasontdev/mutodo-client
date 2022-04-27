@@ -53,7 +53,7 @@ const ListItem = styled.div`
   &:hover {
     background-color: "honeydew"};
   }
-  background-color: ${(props: { selected?: boolean; key: string }) =>
+  background-color: ${(props: { selected?: boolean; key?: string }) =>
       props.selected ? "greenyellow" : "inherited"}; 
 `;
 
