@@ -10,9 +10,9 @@ type TasklistItemProps = {
 
 function TasklistItem({ task, selected, clickHandler }: TasklistItemProps) {
   return (
-    <ListItem key={task.id} selected={selected}>
+    <ListItem key={task.id} onClick={clickHandler} selected={selected}>
       <FlexRowAlignCenter>
-        <div onClick={clickHandler}>{task.name}</div>
+        <div>{task.name}</div>
       </FlexRowAlignCenter>
     </ListItem>
   );
