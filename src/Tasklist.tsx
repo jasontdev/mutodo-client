@@ -17,8 +17,8 @@ import {
 } from "./ui-components";
 
 export default function Tasklist() {
-  const [showNewTask, setShowNewTask] = useState(false);
   const [newTaskName, setNewTaskName] = useState("");
+  const [showNewTask, setShowNewTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState("");
   const params = useParams();
   const auth = useAuth();
@@ -85,13 +85,16 @@ export default function Tasklist() {
     return showNewTask ? (
       <FlexRowJustifyCenter>
         <Button onClick={() => newTaskMutation()}>Submit</Button>
-        <ButtonOutline onClick={() => setShowNewTask(false)}>
+        <ButtonOutline onClick={() => setShowNewTask(false)}> 
           Cancel
         </ButtonOutline>
       </FlexRowJustifyCenter>
-    ) : (
+    ) : selectedTask !== "" ? (
+      <FlexRowJustifyCenter><Button>Mark as Complete</Button><ButtonOutline>Delete</ButtonOutline></FlexRowJustifyCenter>
+    )
+    :(
       <FlexRowJustifyCenter>
-        <Button onClick={() => setShowNewTask(true)}>Create</Button>
+        <Button onClick={() => { setShowNewTask(true); setSelectedTask(""); }}>New task</Button>
       </FlexRowJustifyCenter>
     );
   }
@@ -109,7 +112,6 @@ export default function Tasklist() {
       `
       );
       // TODO: display new task in the tasklist rather than wait for refetch
-      setShowNewTask(false);
       refetch();
     } catch (error) {
       console.log("Error creating new request.");
@@ -143,7 +145,7 @@ export default function Tasklist() {
             </List>
           )}
           {
-            renderButtons() /* displays Create or Submit and Cancel depending on state of showNewTask */
+            renderButtons()
           }
         </Box>
       </CenteredContent>
