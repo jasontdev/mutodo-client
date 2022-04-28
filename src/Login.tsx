@@ -28,7 +28,7 @@ export default function Login() {
         .then((response) => response.json())
         .then((json) => {
           auth.setAccessToken(json.access_token);
-          navigate("/home");
+          navigate("/");
         });
     }
   });

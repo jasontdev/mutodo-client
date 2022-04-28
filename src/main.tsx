@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import "@fontsource/open-sans";
 import { GlobalStyle } from "./GlobalStyle";
 import App from "./App";
-import Home from "./Home";
 import Login from "./Login";
 import { AuthProvider } from "./auth";
 import Tasklist from "./Tasklist";
@@ -27,7 +26,6 @@ ReactDOM.render(
               }
             >
               <Route path="/" element={<App />} />
-              <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/tasklist/:tasklist_id" element={<Tasklist />} />
             </Route>
