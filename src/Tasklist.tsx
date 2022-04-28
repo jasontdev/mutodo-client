@@ -84,7 +84,7 @@ export default function Tasklist() {
   function renderButtons() {
     return showNewTask ? (
       <FlexRowJustifyCenter>
-        <Button onClick={() => newTaskMutation()}>Submit</Button>
+        <Button onClick={() => { newTaskMutation(); setShowNewTask(false); }}>Submit</Button>
         <ButtonOutline onClick={() => setShowNewTask(false)}> 
           Cancel
         </ButtonOutline>
