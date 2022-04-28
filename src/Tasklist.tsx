@@ -45,7 +45,12 @@ export default function Tasklist() {
     (taskToDelete: { task: string; tasklist: string }) =>
       deleteTaskMutation(taskToDelete, auth.getAccessToken()),
     {
-      onSuccess: refetch,
+      onSuccess: () => {
+        setShowNewTask(false);
+        setSelectedTask("");
+        setNewTaskName("");
+        refetch();
+      },
     }
   );
 
@@ -100,7 +105,12 @@ export default function Tasklist() {
         >
           Submit
         </Button>
-        <ButtonOutline onClick={() => setShowNewTask(false)}>
+        <ButtonOutline
+          onClick={() => {
+            setShowNewTask(false);
+            setNewTaskName("");
+          }}
+        >
           Cancel
         </ButtonOutline>
       </FlexRowJustifyCenter>
