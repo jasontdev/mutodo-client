@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useAuth } from "./auth";
 import graphql from "./graphql";
@@ -39,6 +39,14 @@ export default function Tasklist() {
         auth.getAccessToken(),
         tasksQuery
       )
+  );
+
+  const mutation = useMutation(
+    (taskToDelete: { task: string; tasklist: string }) =>
+      deleteTaskMutation(taskToDelete, auth.getAccessToken()),
+    {
+      onSuccess: refetch,
+    }
   );
 
   useEffect(() => {
@@ -99,7 +107,14 @@ export default function Tasklist() {
     ) : selectedTask !== "" ? (
       <FlexRowJustifyCenter>
         <Button>Mark as Complete</Button>
-        <ButtonOutline onClick={() => deleteTaskMutation()}>
+        <ButtonOutline
+          onClick={() =>
+            mutation.mutate(
+              { task: selectedTask, tasklist: params.tasklist_id },
+              auth.getAccessToken()
+            )
+          }
+        >
           Delete
         </ButtonOutline>
       </FlexRowJustifyCenter>
@@ -119,7 +134,7 @@ export default function Tasklist() {
 
   async function newTaskMutation() {
     try {
-      const data = await graphql.query(
+      await graphql.query(
         "http://localhost:4100/graphql",
         auth.getAccessToken(),
         `mutation NewTask {
@@ -136,20 +151,19 @@ export default function Tasklist() {
     }
   }
 
-  async function deleteTaskMutation() {
-    try {
-      await graphql.query(
-        "http://localhost:4100/graphql",
-        auth.getAccessToken(),
-        `mutation DeleteTask {
-           deleteTask(tasklist: "${params.tasklist_id}", task: "${selectedTask}") {
-            id
-          }
-        }`
-      );
-    } catch (error) {
-      console.log("Error deleting task");
-    }
+  async function deleteTaskMutation(
+    { task, tasklist }: { task: string; tasklist: string },
+    accessKey: string
+  ) {
+    return graphql.query(
+      "http://localhost:4100/graphql",
+      accessKey,
+      `mutation DeleteTask {
+        deleteTask(tasklist: "${tasklist}", task: "${task}") {
+          id
+        }
+      }`
+    );
   }
 
   return (
