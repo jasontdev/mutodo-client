@@ -84,17 +84,35 @@ export default function Tasklist() {
   function renderButtons() {
     return showNewTask ? (
       <FlexRowJustifyCenter>
-        <Button onClick={() => { setShowNewTask(false); newTaskMutation(); }}>Submit</Button>
-        <ButtonOutline onClick={() => setShowNewTask(false)}> 
+        <Button
+          onClick={() => {
+            setShowNewTask(false);
+            newTaskMutation();
+          }}
+        >
+          Submit
+        </Button>
+        <ButtonOutline onClick={() => setShowNewTask(false)}>
           Cancel
         </ButtonOutline>
       </FlexRowJustifyCenter>
     ) : selectedTask !== "" ? (
-      <FlexRowJustifyCenter><Button>Mark as Complete</Button><ButtonOutline>Delete</ButtonOutline></FlexRowJustifyCenter>
-    )
-    :(
       <FlexRowJustifyCenter>
-        <Button onClick={() => { setShowNewTask(true); setSelectedTask(""); }}>New task</Button>
+        <Button>Mark as Complete</Button>
+        <ButtonOutline onClick={() => deleteTaskMutation()}>
+          Delete
+        </ButtonOutline>
+      </FlexRowJustifyCenter>
+    ) : (
+      <FlexRowJustifyCenter>
+        <Button
+          onClick={() => {
+            setShowNewTask(true);
+            setSelectedTask("");
+          }}
+        >
+          New task
+        </Button>
       </FlexRowJustifyCenter>
     );
   }
@@ -115,6 +133,22 @@ export default function Tasklist() {
       refetch();
     } catch (error) {
       console.log("Error creating new request.");
+    }
+  }
+
+  async function deleteTaskMutation() {
+    try {
+      await graphql.query(
+        "http://localhost:4100/graphql",
+        auth.getAccessToken(),
+        `mutation DeleteTask {
+           deleteTask(tasklist: "${params.tasklist_id}", task: "${selectedTask}") {
+            id
+          }
+        }`
+      );
+    } catch (error) {
+      console.log("Error deleting task");
     }
   }
 
@@ -144,9 +178,7 @@ export default function Tasklist() {
               )}
             </List>
           )}
-          {
-            renderButtons()
-          }
+          {renderButtons()}
         </Box>
       </CenteredContent>
     </Layout>
