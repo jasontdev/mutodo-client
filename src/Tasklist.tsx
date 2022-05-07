@@ -54,6 +54,24 @@ export default function Tasklist() {
     }
   );
 
+  const newTaskMutation = useMutation((newTask: {tasklistId: string; name: string}) => {
+    return graphql.query(
+        "http://localhost:4100/graphql",
+        auth.getAccessToken(),
+        `mutation NewTask {
+          newTask(tasklist: "${newTask.tasklistId}", name: "${newTask.name}") {
+              id
+          }
+        }
+      `
+      );
+  }, {
+    onSuccess: () => {
+      setNewTaskName("");
+      refetch();
+    }
+  });
+
   useEffect(() => {
     if (!auth.getAccessToken()) {
       window.location.replace(auth.loginUri());
@@ -70,8 +88,9 @@ export default function Tasklist() {
     });
   }
 
-  function renderTasks(tasks: Task[]) {
-    if (tasks.length === 0) {
+  function renderTasks() {
+    const tasks = data.data.tasks;
+    if (tasks.length === 0 && showNewTask === false) {
       return (
         <FlexRowJustifyCenter>
           <h3>Tasklist is empty</h3>
@@ -79,7 +98,7 @@ export default function Tasklist() {
       );
     }
     return (
-      <div>
+      <List>
         {tasks.map((task: Task) => {
           return (
             <TasklistItem
@@ -90,17 +109,42 @@ export default function Tasklist() {
             />
           );
         })}
-      </div>
+        {showNewTask ? (
+          <NewTask
+            onChange={(event) => setNewTaskName(event.currentTarget.value)}
+            value={newTaskName}
+          />
+        ) : null}
+      </List>
     );
   }
 
   function renderButtons() {
+    function taskActionButtons() {
+      return (
+        <FlexRowJustifyCenter>
+          <Button>Mark as Complete</Button>
+          <ButtonOutline
+            onClick={() =>
+              mutation.mutate(
+                { task: selectedTask, tasklist: params.tasklist_id },
+                auth.getAccessToken()
+              )
+            }
+          >
+            Delete
+          </ButtonOutline>
+        </FlexRowJustifyCenter>
+      );
+    }
+
     return showNewTask ? (
       <FlexRowJustifyCenter>
         <Button
           onClick={() => {
             setShowNewTask(false);
-            newTaskMutation();
+            setNewTaskName("");
+            newTaskMutation.mutate({tasklistId: params.tasklist_id, name: newTaskName});
           }}
         >
           Submit
@@ -115,19 +159,7 @@ export default function Tasklist() {
         </ButtonOutline>
       </FlexRowJustifyCenter>
     ) : selectedTask !== "" ? (
-      <FlexRowJustifyCenter>
-        <Button>Mark as Complete</Button>
-        <ButtonOutline
-          onClick={() =>
-            mutation.mutate(
-              { task: selectedTask, tasklist: params.tasklist_id },
-              auth.getAccessToken()
-            )
-          }
-        >
-          Delete
-        </ButtonOutline>
-      </FlexRowJustifyCenter>
+      taskActionButtons()
     ) : (
       <FlexRowJustifyCenter>
         <Button
@@ -140,25 +172,6 @@ export default function Tasklist() {
         </Button>
       </FlexRowJustifyCenter>
     );
-  }
-
-  async function newTaskMutation() {
-    try {
-      await graphql.query(
-        "http://localhost:4100/graphql",
-        auth.getAccessToken(),
-        `mutation NewTask {
-          newTask(tasklist: "${params.tasklist_id}", name: "${newTaskName}") {
-              id
-          }
-        }
-      `
-      );
-      // TODO: display new task in the tasklist rather than wait for refetch
-      refetch();
-    } catch (error) {
-      console.log("Error creating new request.");
-    }
   }
 
   async function deleteTaskMutation(
@@ -187,21 +200,8 @@ export default function Tasklist() {
             <FlexRowJustifyCenter>
               <h3>Error loading tasks.</h3>
             </FlexRowJustifyCenter>
-          ) : (
-            <List>
-              {renderTasks(data.data.tasks)}
-              {showNewTask ? (
-                <NewTask
-                  onChange={(event) =>
-                    setNewTaskName(event.currentTarget.value)
-                  }
-                  value={newTaskName}
-                />
-              ) : (
-                <div />
-              )}
-            </List>
-          )}
+          ) : renderTasks()
+          }
           {renderButtons()}
         </Box>
       </CenteredContent>
