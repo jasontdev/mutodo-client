@@ -16,10 +16,16 @@ import {
   List,
 } from "./ui-components";
 
+enum Mode {
+  NothingSelected,
+  TaskSelected,
+  NewTask,
+}
+
 export default function Tasklist() {
   const [newTaskName, setNewTaskName] = useState("");
-  const [showNewTask, setShowNewTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState("");
+  const [mode, setMode] = useState(Mode.NothingSelected);
   const params = useParams();
   const auth = useAuth();
 
@@ -41,12 +47,29 @@ export default function Tasklist() {
       )
   );
 
-  const mutation = useMutation(
-    (taskToDelete: { task: string; tasklist: string }) =>
-      deleteTaskMutation(taskToDelete, auth.getAccessToken()),
+  const deleteTask = useMutation(
+    ({
+      task,
+      tasklist,
+      accessToken,
+    }: {
+      task: string;
+      tasklist: string;
+      accessToken: string;
+    }) => {
+      return graphql.query(
+        "http://localhost:4100/graphql",
+        accessToken,
+        `mutation DeleteTask {
+        deleteTask(tasklist: "${tasklist}", task: "${task}") {
+          id
+        }
+      }`
+      );
+    },
     {
       onSuccess: () => {
-        setShowNewTask(false);
+        setMode(Mode.NothingSelected);
         setSelectedTask("");
         setNewTaskName("");
         refetch();
@@ -54,23 +77,33 @@ export default function Tasklist() {
     }
   );
 
-  const newTaskMutation = useMutation((newTask: {tasklistId: string; name: string}) => {
-    return graphql.query(
+  const newTaskMutation = useMutation(
+    ({
+      tasklist,
+      name,
+      accessToken,
+    }: {
+      accessToken: string;
+      tasklist: string;
+      name: string;
+    }) => {
+      return graphql.query(
         "http://localhost:4100/graphql",
-        auth.getAccessToken(),
+        accessToken,
         `mutation NewTask {
-          newTask(tasklist: "${newTask.tasklistId}", name: "${newTask.name}") {
+          newTask(tasklist: "${tasklist}", name: "${name}") {
               id
           }
-        }
-      `
+        }`
       );
-  }, {
-    onSuccess: () => {
-      setNewTaskName("");
-      refetch();
+    },
+    {
+      onSuccess: () => {
+        setNewTaskName("");
+        refetch();
+      },
     }
-  });
+  );
 
   useEffect(() => {
     if (!auth.getAccessToken()) {
@@ -78,19 +111,19 @@ export default function Tasklist() {
     }
   });
 
-  function selectOrDeselectTask(id: string) {
-    setSelectedTask((prevState) => {
-      if (prevState === id) {
-        return "";
-      } else {
-        return id;
-      }
-    });
+  function toggleSelection(id: string) {
+    if (id === selectedTask) {
+      setSelectedTask("");
+      setMode(Mode.NothingSelected);
+    } else {
+      setSelectedTask(id);
+      setMode(Mode.TaskSelected);
+    }
   }
 
   function renderTasks() {
     const tasks = data.data.tasks;
-    if (tasks.length === 0 && showNewTask === false) {
+    if (tasks.length === 0 && mode !== Mode.NewTask) {
       return (
         <FlexRowJustifyCenter>
           <h3>Tasklist is empty</h3>
@@ -104,12 +137,12 @@ export default function Tasklist() {
             <TasklistItem
               key={task.id}
               task={task}
-              clickHandler={() => selectOrDeselectTask(task.id)}
+              clickHandler={() => toggleSelection(task.id)}
               selected={task.id === selectedTask}
             />
           );
         })}
-        {showNewTask ? (
+        {mode === Mode.NewTask ? (
           <NewTask
             onChange={(event) => setNewTaskName(event.currentTarget.value)}
             value={newTaskName}
@@ -126,10 +159,11 @@ export default function Tasklist() {
           <Button>Mark as Complete</Button>
           <ButtonOutline
             onClick={() =>
-              mutation.mutate(
-                { task: selectedTask, tasklist: params.tasklist_id },
-                auth.getAccessToken()
-              )
+              deleteTask.mutate({
+                task: selectedTask,
+                tasklist: params.tasklist_id,
+                accessToken: auth.getAccessToken(),
+              })
             }
           >
             Delete
@@ -138,55 +172,56 @@ export default function Tasklist() {
       );
     }
 
-    return showNewTask ? (
-      <FlexRowJustifyCenter>
-        <Button
-          onClick={() => {
-            setShowNewTask(false);
-            setNewTaskName("");
-            newTaskMutation.mutate({tasklistId: params.tasklist_id, name: newTaskName});
-          }}
-        >
-          Submit
-        </Button>
-        <ButtonOutline
-          onClick={() => {
-            setShowNewTask(false);
-            setNewTaskName("");
-          }}
-        >
-          Cancel
-        </ButtonOutline>
-      </FlexRowJustifyCenter>
-    ) : selectedTask !== "" ? (
-      taskActionButtons()
-    ) : (
-      <FlexRowJustifyCenter>
-        <Button
-          onClick={() => {
-            setShowNewTask(true);
-            setSelectedTask("");
-          }}
-        >
-          New task
-        </Button>
-      </FlexRowJustifyCenter>
-    );
-  }
+    function createNewTaskButton() {
+      return (
+        <FlexRowJustifyCenter>
+          <Button
+            onClick={() => {
+              setMode(Mode.NewTask);
+            }}
+          >
+            Create
+          </Button>
+        </FlexRowJustifyCenter>
+      );
+    }
 
-  async function deleteTaskMutation(
-    { task, tasklist }: { task: string; tasklist: string },
-    accessKey: string
-  ) {
-    return graphql.query(
-      "http://localhost:4100/graphql",
-      accessKey,
-      `mutation DeleteTask {
-        deleteTask(tasklist: "${tasklist}", task: "${task}") {
-          id
-        }
-      }`
-    );
+    function newTaskButtons() {
+      return (
+        <FlexRowJustifyCenter>
+          <Button
+            onClick={() => {
+              newTaskMutation.mutate({
+                accessToken: auth.getAccessToken(),
+                tasklist: params.tasklist_id,
+                name: newTaskName,
+              });
+            }}
+          >
+            Submit
+          </Button>
+          <ButtonOutline
+            onClick={() => {
+              setMode(Mode.TaskSelected);
+              setNewTaskName("");
+            }}
+          >
+            Cancel
+          </ButtonOutline>
+        </FlexRowJustifyCenter>
+      );
+    }
+    switch (mode) {
+      case Mode.TaskSelected: {
+        return taskActionButtons();
+      }
+      case Mode.NothingSelected: {
+        return createNewTaskButton();
+      }
+      case Mode.NewTask: {
+        return newTaskButtons();
+      }
+    }
   }
 
   return (
@@ -200,8 +235,9 @@ export default function Tasklist() {
             <FlexRowJustifyCenter>
               <h3>Error loading tasks.</h3>
             </FlexRowJustifyCenter>
-          ) : renderTasks()
-          }
+          ) : (
+            renderTasks()
+          )}
           {renderButtons()}
         </Box>
       </CenteredContent>
