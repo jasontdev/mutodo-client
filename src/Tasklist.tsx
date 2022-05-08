@@ -22,12 +22,23 @@ enum Mode {
   NewTask,
 }
 
+type TaskslistQueryResult = {
+  data: {
+    tasks: Task[];
+  };
+};
+
 export default function Tasklist() {
   const [newTaskName, setNewTaskName] = useState("");
   const [selectedTask, setSelectedTask] = useState("");
   const [mode, setMode] = useState(Mode.NothingSelected);
   const params = useParams();
   const auth = useAuth();
+
+  // guard clause so that that params.tasklist_id always defined
+  if (!params.tasklist_id) {
+    return <div />;
+  }
 
   const tasksQuery = `
     query Tasks {
@@ -37,8 +48,8 @@ export default function Tasklist() {
       }
     }`;
 
-  const { data, isLoading, isError, refetch } = useQuery(
-    [params.tasklist_id],
+  const { data, isLoading, isError, refetch } = useQuery<TaskslistQueryResult>(
+    params.tasklist_id,
     () =>
       graphql.query(
         "http://localhost:4100/graphql",
@@ -68,10 +79,12 @@ export default function Tasklist() {
       );
     },
     {
-      onSuccess: () => {
+      onMutate: () => {
         setMode(Mode.NothingSelected);
         setSelectedTask("");
         setNewTaskName("");
+      },
+      onSuccess: () => {
         refetch();
       },
     }
@@ -98,8 +111,10 @@ export default function Tasklist() {
       );
     },
     {
-      onSuccess: () => {
+      onMutate: () => {
         setNewTaskName("");
+      },
+      onSuccess: () => {
         refetch();
       },
     }
@@ -122,7 +137,11 @@ export default function Tasklist() {
   }
 
   function renderTasks() {
+    if (!data) {
+      return <div />;
+    }
     const tasks = data.data.tasks;
+
     if (tasks.length === 0 && mode !== Mode.NewTask) {
       return (
         <FlexRowJustifyCenter>
@@ -158,13 +177,15 @@ export default function Tasklist() {
         <FlexRowJustifyCenter>
           <Button>Mark as Complete</Button>
           <ButtonOutline
-            onClick={() =>
-              deleteTask.mutate({
-                task: selectedTask,
-                tasklist: params.tasklist_id,
-                accessToken: auth.getAccessToken(),
-              })
-            }
+            onClick={() => {
+              if (params.tasklist_id) {
+                deleteTask.mutate({
+                  task: selectedTask,
+                  tasklist: params.tasklist_id,
+                  accessToken: auth.getAccessToken(),
+                });
+              }
+            }}
           >
             Delete
           </ButtonOutline>
@@ -191,11 +212,13 @@ export default function Tasklist() {
         <FlexRowJustifyCenter>
           <Button
             onClick={() => {
-              newTaskMutation.mutate({
-                accessToken: auth.getAccessToken(),
-                tasklist: params.tasklist_id,
-                name: newTaskName,
-              });
+              if (params.tasklist_id) {
+                newTaskMutation.mutate({
+                  accessToken: auth.getAccessToken(),
+                  tasklist: params.tasklist_id,
+                  name: newTaskName,
+                });
+              }
             }}
           >
             Submit
